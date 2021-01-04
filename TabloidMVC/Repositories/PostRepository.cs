@@ -153,7 +153,8 @@ namespace TabloidMVC.Repositories
                               LEFT JOIN Category c ON p.CategoryId = c.id
                               LEFT JOIN UserProfile u ON p.UserProfileId = u.id
                               LEFT JOIN UserType ut ON u.UserTypeId = ut.id
-                            WHERE p.UserProfileId=@Id";
+                         WHERE p.UserProfileId=@Id
+                          ORDER BY  p.CreateDateTime";
                     cmd.Parameters.AddWithValue("@Id", UserId);
                     var reader = cmd.ExecuteReader();
                     var posts = new List<Post>();
@@ -193,6 +194,20 @@ namespace TabloidMVC.Repositories
                     cmd.Parameters.AddWithValue("@UserProfileId", post.UserProfileId);
 
                     post.Id = (int)cmd.ExecuteScalar();
+                }
+            }
+        }
+
+        public void Delete(int id)
+        {
+            using(var conn= Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"DELETE FROM Post WHERE Id=@id";
+                    cmd.Parameters.AddWithValue("@id", id);
+                    cmd.ExecuteNonQuery();
                 }
             }
         }
