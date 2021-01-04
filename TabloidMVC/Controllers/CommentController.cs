@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using TabloidMVC.Controllers;
 using TabloidMVC.Repositories;
+using TabloidMVC.Models;
 
 namespace TabloidMVC.Controllers
 {
@@ -40,10 +41,11 @@ namespace TabloidMVC.Controllers
         // POST: HomeController1/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(Comment comment)
         {
             try
             {
+                
                 return RedirectToAction(nameof(Index));
             }
             catch
