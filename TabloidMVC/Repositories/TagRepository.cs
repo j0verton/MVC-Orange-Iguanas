@@ -47,8 +47,8 @@ namespace TabloidMVC.Repositories
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                        SELECT Id, [Name], Email, Address, Phone, NeighborhoodId
-                        FROM Owner
+                        SELECT Id, [Name]
+                        FROM Tag
                         WHERE Id = @id";
 
                     cmd.Parameters.AddWithValue("@id", id);
