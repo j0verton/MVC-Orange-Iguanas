@@ -9,7 +9,7 @@ using TabloidMVC.Utils;
 
 namespace TabloidMVC.Repositories
 {
-    public class TagRepository : BaseRepository
+    public class TagRepository : BaseRepository, ITagRepository
     {
         public TagRepository(IConfiguration config) : base(config) { }
 
