@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TabloidMVC.Models;
+using TabloidMVC.Models.ViewModels;
 using TabloidMVC.Repositories;
 
 namespace TabloidMVC.Controllers
@@ -14,10 +15,11 @@ namespace TabloidMVC.Controllers
     public class TagController : Controller
     {
         private readonly ITagRepository _tagRepository;
-
-        public TagController(ITagRepository tagRepository)
+        private readonly IPostRepository _postRepository;
+        public TagController(ITagRepository tagRepository, IPostRepository postRepository)
         {
             _tagRepository = tagRepository;
+            _postRepository = postRepository;
         }
 
     // GET: TagController
@@ -76,6 +78,35 @@ namespace TabloidMVC.Controllers
                 return RedirectToAction("Index");
             }
             catch(Exception ex)
+            {
+                return View(tag);
+            }
+        }
+
+        // GET: TagController/AddToPost/5
+        public ActionResult AddToPost(int id)
+        {
+            PostTagViewModel vm = new PostTagViewModel()
+            {
+                Post = _postRepository.GetPublishedPostById(id),
+                Tags = _tagRepository.GetAllTags()
+
+            };
+            return View(vm);
+
+        }
+
+        // POST: TagController/AddToPost/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddToPost(int id, Tag tag)
+        {
+            try
+            {
+                _tagRepository.
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
             {
                 return View(tag);
             }
