@@ -87,20 +87,5 @@ namespace TabloidMVC.Controllers
             return RedirectToAction("Index");
         }
 
-        // POST: TagController/Delete/5
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult Delete(int id)
-        //{
-        //    try
-        //    {
-        //        _tagRepository.DeleteTag(id);
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    catch
-        //    {
-        //        return View("Index");
-        //    }
-        //}
     }
 }
