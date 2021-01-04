@@ -205,6 +205,9 @@ namespace TabloidMVC.Repositories
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
                 {
+                    cmd.CommandText = @"DELETE FROM PostTage WHERE PostId=@id";
+                    cmd.CommandText = @"DELETE FROM Comment WHERE PostId=@id";
+                    cmd.CommandText = @"DELETE FROM PostReaction WHERE PostId=@id";
                     cmd.CommandText = @"DELETE FROM Post WHERE Id=@id";
                     cmd.Parameters.AddWithValue("@id", id);
                     cmd.ExecuteNonQuery();
