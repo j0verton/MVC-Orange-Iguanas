@@ -1,4 +1,4 @@
-﻿@model IEnumerable<TabloidMVC.Models.Comment>
+﻿@model TabloidMVC.Models.ViewModels.CommentCreateViewModel
 
 @{
     ViewData["Title"] = "Index";
@@ -6,11 +6,10 @@
 <div class="container pt-5">
     <h1>Comment Section</h1>
 
-    <p>
-        <a asp-controller="Comment" asp-action="Index" asp-route-id="@Model.Id" class="btn btn-outline-primary mx-1" title="Show all Comments">
-            <i class="far fa-comments"></i>
-        </a>
-    </p>
+
+    @*<p>
+        <a class="btn btn-primary" asp-action="Create" asp-route-id="@Model.ParentPost.Id">New Post</a>
+    </p>*@
     <table class="table table-striped">
         <thead>
             <tr>
@@ -30,7 +29,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model)
+            @foreach (var item in Model.Comments)
             {
                 <tr>
                     <td>
