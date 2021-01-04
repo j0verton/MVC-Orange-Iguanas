@@ -21,7 +21,7 @@ namespace TabloidMVC.Repositories
                 {
                     cmd.CommandText = @"
                         SELECT c.Id, c.PostId, c.UserProfileId, c.Subject, c.Content, c.CreateDateTime,
-                                u.Id as UserProfileId, u.DisplayName, u.FirstName, su.LastName, u.Email,
+                                u.Id as UserProfileId, u.DisplayName, u.FirstName, u.LastName, u.Email,
                                 u.ImageLocation as AvatarImage, u.UserTypeId
                         FROM Comment c
                         LEFT JOIN userProfile u ON c.UserProfileId = u.id

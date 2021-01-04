@@ -1,0 +1,61 @@
+﻿@model IEnumerable<TabloidMVC.Models.Comment>
+
+@{
+    ViewData["Title"] = "Index";
+}
+<div class="container pt-5">
+    <h1>Comment Section</h1>
+
+    <p>
+        <a class="btn btn-primary" asp-action="Create">New Post</a>
+    </p>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>
+                    UserName
+                </th>
+                <th>
+                    Date
+                </th>
+                <th>
+                    Subject
+                </th>
+                <th>
+                    Comment
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UserProfile.DisplayName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CreateDateTime)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Subject)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Content)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Content)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CreateDateTime)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                        @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                        @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    </div>
