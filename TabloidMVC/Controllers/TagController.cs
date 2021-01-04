@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TabloidMVC.Models;
 using TabloidMVC.Repositories;
 
 namespace TabloidMVC.Controllers
@@ -26,8 +27,6 @@ namespace TabloidMVC.Controllers
             return View(tags);
         }
         
-
-
         // GET: TagController/Details/5
         public ActionResult Details(int id)
         {
@@ -37,16 +36,18 @@ namespace TabloidMVC.Controllers
         // GET: TagController/Create
         public ActionResult Create()
         {
+
             return View();
         }
 
         // POST: TagController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(Tag tag)
         {
             try
             {
+                _tagRepository.Add(tag);
                 return RedirectToAction(nameof(Index));
             }
             catch

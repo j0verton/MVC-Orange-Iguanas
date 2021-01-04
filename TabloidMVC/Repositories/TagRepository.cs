@@ -45,8 +45,7 @@ namespace TabloidMVC.Repositories
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"SELECT Id, Name
-                                        FROM Tag
+                    cmd.CommandText = @"INSERT INTO Tag (Name)
                                         OUTPUT INSERTED.ID
                                         VALUES(@Name)";
                     cmd.Parameters.AddWithValue("@Name", tag.Name);
