@@ -38,6 +38,24 @@ namespace TabloidMVC.Repositories
             }
         }
 
+        public void Add(Tag tag)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"SELECT Id, Name
+                                        FROM Tag
+                                        OUTPUT INSERTED.ID
+                                        VALUES(@Name)";
+                    cmd.Parameters.AddWithValue("@Name", tag.Name);
+
+
+                    tag.Id = (int)cmd.ExecuteScalar();
+                }
+            }
+        }
 
 
         private Tag NewTagFromReader(SqlDataReader reader)
