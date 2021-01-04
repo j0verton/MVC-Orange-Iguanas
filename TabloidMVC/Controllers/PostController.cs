@@ -20,10 +20,17 @@ namespace TabloidMVC.Controllers
             _categoryRepository = categoryRepository;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(int UserId=0)
         {
-            var posts = _postRepository.GetAllPublishedPosts();
-            return View(posts);
+            if (UserId == 0)
+            {
+                var posts = _postRepository.GetAllPublishedPosts();
+                return View(posts);
+            }
+            else {
+                var MyPosts = _postRepository.GetPostByUserId(UserId);
+                return View(MyPosts);
+            }
         }
 
         public IActionResult Details(int id)
@@ -66,6 +73,10 @@ namespace TabloidMVC.Controllers
                 vm.CategoryOptions = _categoryRepository.GetAll();
                 return View(vm);
             }
+        }
+        public IActionResult MyPosts()
+        {
+            return RedirectToAction("Index", new { UserId = GetCurrentUserProfileId() });
         }
 
         private int GetCurrentUserProfileId()
