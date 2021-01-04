@@ -22,6 +22,9 @@
                 <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline-primary mx-1" title="Delete">
                     <i class="fas fa-trash"></i>
                 </a>
+                <a asp-controller="Comments" asp-action="Index" asp-route-id="@Model.Id" class="btn btn-outline-primary mx-1" title="Show all Comments">
+                    <i class="far fa-comments"></i>
+                </a>
             </div>
         </section>
         <hr />
@@ -35,6 +38,9 @@
         }
         <section class="row post__content">
             <p class="col-sm-12 mt-5">@Html.DisplayFor(model => model.Content)</p>
+        </section>
+        <section class="row comment__section"
+            <button>View Comments</button>
         </section>
     </div>
 </div>

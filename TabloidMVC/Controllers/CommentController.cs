@@ -4,15 +4,25 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TabloidMVC.Controllers;
+using TabloidMVC.Repositories;
 
 namespace TabloidMVC.Controllers
 {
-    public class HomeController1 : Controller
+    public class CommentController : Controller
     {
+        private readonly ICommentRepository _commentRepository;
+
+        public CommentController(ICommentRepository commentRepository)
+        {
+            _commentRepository = commentRepository;
+        }
+        
         // GET: HomeController1
         public ActionResult Index(int id)
         {
-            return View();
+            var comments = _commentRepository.GetCommentsByPostId(id);
+            return View(comments);
         }
 
         // GET: HomeController1/Details/5
