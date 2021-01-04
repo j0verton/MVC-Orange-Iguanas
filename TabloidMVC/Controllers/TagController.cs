@@ -73,7 +73,7 @@ namespace TabloidMVC.Controllers
             try
             {
                 _tagRepository.EditTag(tag);
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index");
             }
             catch(Exception ex)
             {
