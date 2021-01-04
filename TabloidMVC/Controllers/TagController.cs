@@ -30,6 +30,7 @@ namespace TabloidMVC.Controllers
         // GET: TagController/Details/5
         public ActionResult Details(int id)
         {
+            
             return View();
         }
 
@@ -50,7 +51,7 @@ namespace TabloidMVC.Controllers
                 _tagRepository.Add(tag);
                 return RedirectToAction(nameof(Index));
             }
-            catch
+            catch(Exception ex)
             {
                 return View();
             }
@@ -59,43 +60,32 @@ namespace TabloidMVC.Controllers
         // GET: TagController/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+
+            Tag tag = _tagRepository.GetTagById(id);
+            return View(tag);
         }
 
         // POST: TagController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(int id, Tag tag)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                _tagRepository.EditTag(tag);
+                return RedirectToAction("Index");
             }
-            catch
+            catch(Exception ex)
             {
-                return View();
+                return View(tag);
             }
         }
 
-        // GET: TagController/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            _tagRepository.DeleteTag(id);
+            return RedirectToAction("Index");
         }
 
-        // POST: TagController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
     }
 }
