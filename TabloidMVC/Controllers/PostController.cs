@@ -5,6 +5,8 @@ using Microsoft.VisualBasic;
 using System.Security.Claims;
 using TabloidMVC.Models.ViewModels;
 using TabloidMVC.Repositories;
+using TabloidMVC.Models;
+using System;
 
 namespace TabloidMVC.Controllers
 {
@@ -20,17 +22,11 @@ namespace TabloidMVC.Controllers
             _categoryRepository = categoryRepository;
         }
 
-        public IActionResult Index(int UserId=0)
+        public IActionResult Index()
         {
-            if (UserId == 0)
-            {
                 var posts = _postRepository.GetAllPublishedPosts();
                 return View(posts);
-            }
-            else {
-                var MyPosts = _postRepository.GetPostByUserId(UserId);
-                return View(MyPosts);
-            }
+      
         }
 
         public IActionResult Details(int id)
@@ -76,7 +72,29 @@ namespace TabloidMVC.Controllers
         }
         public IActionResult MyPosts()
         {
-            return RedirectToAction("Index", new { UserId = GetCurrentUserProfileId() });
+            var MyPosts = _postRepository.GetPostByUserId(GetCurrentUserProfileId());
+            return View(MyPosts);
+
+        }
+        [Authorize]
+        public IActionResult Delete(int id)
+        {
+            Post post = _postRepository.GetUserPostById(id, GetCurrentUserProfileId());
+            return View(post);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Delete(int id, Post post)
+        {
+            try
+            {
+                _postRepository.Delete(id);
+                return RedirectToAction(nameof(MyPosts));
+            }
+            catch(Exception ex)
+            {
+                return View(post);
+            }
         }
 
         private int GetCurrentUserProfileId()
