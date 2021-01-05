@@ -37,7 +37,7 @@ namespace TabloidMVC.Controllers
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, userProfile.Id.ToString()),
-                new Claim(ClaimTypes.Email, userProfile.Email),
+                new Claim(ClaimTypes.Email, userProfile.Email)
             };
 
             var claimsIdentity = new ClaimsIdentity(
