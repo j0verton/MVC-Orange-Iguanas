@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
+using System.Linq;
 using TabloidMVC.Models;
 using TabloidMVC.Utils;
 
@@ -94,7 +95,7 @@ namespace TabloidMVC.Repositories
 
                     reader.Close();
 
-                    return profiles;
+                    return profiles.OrderBy(profile => profile.DisplayName).ToList();
                 }
             }
         }
