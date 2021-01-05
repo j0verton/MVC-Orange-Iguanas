@@ -11,6 +11,7 @@ namespace TabloidMVC.Models.ViewModels
         public Post ParentPost { get; set; }
         public List<Comment> Comments {get; set; }
         public Comment NewComment { get; set; }
+       public bool ActiveUser { get; set; }
         
     }
 }

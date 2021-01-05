@@ -52,7 +52,6 @@ namespace TabloidMVC.Controllers
             var currentUser = GetCurrentUser();
             List<Comment> comments = _commentRepository.GetCommentsByPostId(id);
             Post post = _postRepository.GetPublishedPostById(id);
-
             CommentCreateViewModel vm = new CommentCreateViewModel
             {
                 UserId = currentUser,
@@ -85,17 +84,19 @@ namespace TabloidMVC.Controllers
         // GET: HomeController1/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            Comment comment = _commentRepository.GetCommentById(id);
+            return View(comment);
         }
 
         // POST: HomeController1/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(Comment comment)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                _commentRepository.UpdateComment(comment);
+                return RedirectToAction("Index", new { id = comment.PostId });
             }
             catch
             {
@@ -106,17 +107,20 @@ namespace TabloidMVC.Controllers
         // GET: HomeController1/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            Comment comment = _commentRepository.GetCommentById(id);
+            return View(comment);
         }
 
         // POST: HomeController1/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(int id, Comment comment)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                int postId = comment.PostId;
+                _commentRepository.DeleteComment(id);
+                return RedirectToAction("Index", new { id = postId });
             }
             catch
             {
