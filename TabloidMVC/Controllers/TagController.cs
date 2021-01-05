@@ -100,16 +100,16 @@ namespace TabloidMVC.Controllers
         // POST: TagController/AddToPost/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult AddToPost(int id, Tag tag)
+        public ActionResult AddToPost(PostTagViewModel vm)
         {
             try
             {
-                _tagRepository.AddTagToPost(id, tag.Id);
+                _tagRepository.AddTagToPost(vm.Post.Id, vm.CurrentTag.Id);
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
-                return View(tag);
+                return View(vm);
             }
         }
 
