@@ -10,6 +10,7 @@ using TabloidMVC.Models;
 using TabloidMVC.Models.ViewModels;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.VisualBasic;
 
 namespace TabloidMVC.Controllers
 {
@@ -70,6 +71,7 @@ namespace TabloidMVC.Controllers
 
             try
             {
+                vm.NewComment.CreateDateTime = DateAndTime.Now;
                 _commentRepository.AddComment(vm.NewComment);
 
                 return RedirectToAction("Index", new { id = vm.NewComment.PostId });
