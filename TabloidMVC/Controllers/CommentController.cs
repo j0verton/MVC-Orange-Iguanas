@@ -6,23 +6,38 @@ using System.Linq;
 using System.Threading.Tasks;
 using TabloidMVC.Controllers;
 using TabloidMVC.Repositories;
+using TabloidMVC.Models;
+using TabloidMVC.Models.ViewModels;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.VisualBasic;
 
 namespace TabloidMVC.Controllers
 {
     public class CommentController : Controller
     {
         private readonly ICommentRepository _commentRepository;
+        private readonly IPostRepository _postRepository;
 
-        public CommentController(ICommentRepository commentRepository)
+        public CommentController(ICommentRepository commentRepository, IPostRepository postRepository)
         {
             _commentRepository = commentRepository;
+            _postRepository = postRepository;
         }
         
         // GET: HomeController1
         public ActionResult Index(int id)
         {
-            var comments = _commentRepository.GetCommentsByPostId(id);
-            return View(comments);
+            List<Comment> comments = _commentRepository.GetCommentsByPostId(id);
+            Post post = _postRepository.GetPublishedPostById(id);
+
+            CommentCreateViewModel vm = new CommentCreateViewModel
+            {
+                Comments = comments,
+                ParentPost = post
+            };
+
+            return View(vm);
         }
 
         // GET: HomeController1/Details/5
@@ -32,23 +47,38 @@ namespace TabloidMVC.Controllers
         }
 
         // GET: HomeController1/Create
-        public ActionResult Create()
+        public ActionResult Create(int id)
         {
-            return View();
+            var currentUser = GetCurrentUser();
+            List<Comment> comments = _commentRepository.GetCommentsByPostId(id);
+            Post post = _postRepository.GetPublishedPostById(id);
+
+            CommentCreateViewModel vm = new CommentCreateViewModel
+            {
+                UserId = currentUser,
+                Comments = comments,
+                ParentPost = post
+            };
+            return View(vm);
         }
 
         // POST: HomeController1/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(CommentCreateViewModel vm)
         {
+
+
             try
             {
-                return RedirectToAction(nameof(Index));
+                vm.NewComment.CreateDateTime = DateAndTime.Now;
+                _commentRepository.AddComment(vm.NewComment);
+
+                return RedirectToAction("Index", new { id = vm.NewComment.PostId });
             }
             catch
             {
-                return View();
+                return View(vm);
             }
         }
 
@@ -93,5 +123,12 @@ namespace TabloidMVC.Controllers
                 return View();
             }
         }
+
+        public int GetCurrentUser()
+        {
+            int id = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            return id;
+        }
+
     }
 }
