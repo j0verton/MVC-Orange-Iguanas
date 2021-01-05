@@ -118,5 +118,12 @@ namespace TabloidMVC.Controllers
             return RedirectToAction("Index");
         }
 
+        public ActionResult Remove(int id)
+        {
+            //int postTagId = _postRepository._______;
+            //_tagRepository.RemoveTagFromPost(postTagId);
+            return RedirectToAction("Index");
+        }
+
     }
 }

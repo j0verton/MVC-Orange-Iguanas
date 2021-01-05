@@ -39,7 +39,44 @@ namespace TabloidMVC.Repositories
         }
 
         //need to double check this sql query 
-        public List<Tag> GetTagsByPost(int id)
+        public List<PostTag> GetTagsByPost(int id)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"SELECT t.Id, t.Name, pt.Id AS PostTagId, pt.PostId
+                                        FROM Tag t
+                                        JOIN PostTag as pt ON pt.PostId = t.Id
+                                        WHERE pt.PostId = @id";
+                    cmd.Parameters.AddWithValue("@id", id);
+                    var reader = cmd.ExecuteReader();
+
+                    var tags = new List<PostTag>();
+
+                    while (reader.Read())
+                    {
+                        PostTag posttag = new PostTag()
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("PostTagId")),
+                            PostId = reader.GetInt32(reader.GetOrdinal("PostId")),
+                            Tag = new Post() { 
+                                Name = reader.GetString(reader.GetOrdinal("Name")),
+                            }
+                        };
+                    tags.Add(posttag);
+                    
+                    }
+
+                    reader.Close();
+
+                    return tags;
+                }
+            }
+        }
+
+        public List<Tag> GetPostTagsByPost(int id)
         {
             using (var conn = Connection)
             {
@@ -178,6 +215,24 @@ namespace TabloidMVC.Repositories
                 }
             }
         }
+        
+        public void RemoveTagFromPost(int postTagId)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                        DELETE FROM PostTag 
+                        WHERE Id = @id";
+                    cmd.Parameters.AddWithValue("@id", postTagId);
+                    cmd.ExecuteScalar();
+
+                }
+            }
+        }
+
 
 
         private Tag NewTagFromReader(SqlDataReader reader)
