@@ -112,10 +112,11 @@ namespace TabloidMVC.Controllers
         // POST: HomeController1/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(int id)
         {
             try
             {
+                _commentRepository.AddComment(id);
                 return RedirectToAction(nameof(Index));
             }
             catch

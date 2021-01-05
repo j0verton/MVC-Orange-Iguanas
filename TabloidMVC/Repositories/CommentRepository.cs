@@ -43,7 +43,34 @@ namespace TabloidMVC.Repositories
                 }
                }    
         }
+        public Comment GetCommentsById(int id)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                        SELECT *
+                        FROM Comment 
+                        WHERE Id = @id";
 
+                    cmd.Parameters.AddWithValue("@postId", id);
+
+                    var reader = cmd.ExecuteReader();
+
+                    Comment comment = new Comment();
+
+                    if (reader.Read())
+                    {
+                        comment = NewCommentFromReader(reader);
+                    }
+                    reader.Close();
+
+                    return comment;
+                }
+            }
+        }
         public void AddComment(Comment comment)
         {
             using (var conn = Connection)
@@ -65,6 +92,20 @@ namespace TabloidMVC.Repositories
                     cmd.Parameters.AddWithValue("@CreateDateTime", comment.CreateDateTime);
 
                     comment.Id = (int)cmd.ExecuteScalar();
+                }
+            }
+        }
+
+        public void DeleteComment(int id)
+        {
+            using(var conn = Connection)
+            {
+                conn.Open();
+                using(var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"DELETE FROM Comment WHERE Id = @id";
+                    cmd.Parameters.AddWithValue("@id", id);
+                    cmd.ExecuteNonQuery();
                 }
             }
         }
