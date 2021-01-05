@@ -5,55 +5,62 @@
 }
 <div class="container pt-5">
     <h1>Comment Section for @Model.ParentPost.Title</h1>
-
+    
     <p>
-        <a class="btn btn-primary" asp-action="Create" asp-route-id="@Model.ParentPost.Id">Add Comment</a>
+        <div>
+            <a class="btn btn-primary" asp-action="Create" asp-route-id="@Model.ParentPost.Id">Add Comment</a>
+            <a asp-controller="Post" asp-action="Details" asp-route-id="@Model.ParentPost.Id" class="btn btn-primary">Back to Post</a>
+        </div>
     </p>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>
-                    UserName
-                </th>
-                <th>
-                    Date
-                </th>
-                <th>
-                    Subject
-                </th>
-                <th>
-                    Comment
-                </th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.Comments)
-            {
-     
+        <table class="table table-striped">
+            <thead>
                 <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.UserProfile.DisplayName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.CreateDateTime)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Subject)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Content)
-                    </td>
-                    <td>
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-primary mx-1" title="Edit">
-                            <i class="fas fa-pencil-alt"></i>
-                        </a>
-                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-primary mx-1" title="Delete">
-                            <i class="fas fa-trash"></i>
-                        </a>
+                    <th>
+                        UserName
+                    </th>
+                    <th>
+                        Date
+                    </th>
+                    <th>
+                        Subject
+                    </th>
+                    <th>
+                        Comment
+                    </th>
+                    <th></th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Comments)
+                {
+
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.UserProfile.DisplayName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CreateDateTime)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Subject)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Content)
+                        </td>
+                        <td>
+                            @if (item.CurrentUser == true)
+                            {
+                            <td>
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-primary mx-1" title="Edit">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-primary mx-1" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        }
+                        </tr>
+                    }
+            </tbody>
+        </table>
 </div>
