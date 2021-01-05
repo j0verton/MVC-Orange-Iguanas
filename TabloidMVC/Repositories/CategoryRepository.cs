@@ -15,7 +15,7 @@ namespace TabloidMVC.Repositories
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = "SELECT id, name FROM Category";
+                    cmd.CommandText = "SELECT Id, Name, Active FROM Category WHERE Active = 1;";
                     var reader = cmd.ExecuteReader();
 
                     var categories = new List<Category>();
@@ -25,7 +25,8 @@ namespace TabloidMVC.Repositories
                         categories.Add(new Category()
                         {
                             Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                            Name = reader.GetString(reader.GetOrdinal("name")),
+                            Name = reader.GetString(reader.GetOrdinal("Name")),
+                            Active = reader.GetBoolean(reader.GetOrdinal("Active"))
                         });
                     }
 
@@ -42,7 +43,7 @@ namespace TabloidMVC.Repositories
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"SELECT Id, Name FROM Category WHERE Id = @id;";
+                    cmd.CommandText = @"SELECT Id, Name, Active FROM Category WHERE Id = @id;";
                     cmd.Parameters.AddWithValue("@id", id);
 
                     SqlDataReader reader = cmd.ExecuteReader();
@@ -52,7 +53,9 @@ namespace TabloidMVC.Repositories
                         Category category = new Category
                         {
                             Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                            Name = reader.GetString(reader.GetOrdinal("Name"))
+                            Name = reader.GetString(reader.GetOrdinal("Name")),
+                            Active = reader.GetBoolean(reader.GetOrdinal("Active"))
+                        
                         };
                         reader.Close();
                         return category;
@@ -72,7 +75,9 @@ namespace TabloidMVC.Repositories
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = "DELETE FROM Category WHERE Id = @id;";
+                    cmd.CommandText = @"UPDATE Category
+                                        SET Active = 0
+                                        WHERE Id = @id;";
                     cmd.Parameters.AddWithValue("@id", id);
                     cmd.ExecuteNonQuery();
                 }
