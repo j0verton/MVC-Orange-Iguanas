@@ -1,0 +1,17 @@
+﻿@model TabloidMVC.Models.Category
+
+@{
+    ViewData["Title"] = "Delete";
+}
+<div>
+    <hr />
+    <div class="container pt-5">
+
+    <h4>Are you sure you want to delete the @Model.Name category?</h4>
+
+        <form asp-action="Delete">
+            <input type="submit" value="Delete" class="btn btn-danger" /> |
+            <a asp-action="Categories">Back to List</a>
+        </form>
+    </div>
+</div>
