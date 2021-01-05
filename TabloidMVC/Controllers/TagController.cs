@@ -102,7 +102,7 @@ namespace TabloidMVC.Controllers
         {
             try
             {
-                _tagRepository.AddTagToPost(vm.Post.Id, vm.CurrentTag.Id);
+                _tagRepository.AddTagToPost(vm.CurrentTag.Id, vm.Post.Id);
                 return RedirectToAction("Details", "Post", new { id = vm.Post.Id });
             }  catch (Exception ex)
             {
