@@ -51,7 +51,7 @@ namespace TabloidMVC.Repositories
                 using (var cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                        SELECT Id, PostId
+                        SELECT *
                         FROM Comment 
                         WHERE Id = @id";
 

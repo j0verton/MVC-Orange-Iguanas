@@ -52,7 +52,6 @@ namespace TabloidMVC.Controllers
             var currentUser = GetCurrentUser();
             List<Comment> comments = _commentRepository.GetCommentsByPostId(id);
             Post post = _postRepository.GetPublishedPostById(id);
-
             CommentCreateViewModel vm = new CommentCreateViewModel
             {
                 UserId = currentUser,
@@ -106,8 +105,8 @@ namespace TabloidMVC.Controllers
         // GET: HomeController1/Delete/5
         public ActionResult Delete(int id)
         {
-            _commentRepository.GetCommentById(id);
-            return View();
+            Comment comment = _commentRepository.GetCommentById(id);
+            return View(comment);
         }
 
         // POST: HomeController1/Delete/5
