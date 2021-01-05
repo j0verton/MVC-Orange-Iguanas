@@ -95,7 +95,24 @@ namespace TabloidMVC.Repositories
                 }
             }
         }
-
+        public void UpdateComment(Comment comment)
+        {
+            using(var conn = Connection)
+            {
+                conn.Open();
+                using(var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"Update Comment
+                                        SET Subject = @Subject,
+                                            Content = @Content
+                                        WHERE Id = @id";
+                    cmd.Parameters.AddWithValue("@Subject", comment.Subject);
+                    cmd.Parameters.AddWithValue("@Content", comment.Content);
+                    cmd.Parameters.AddWithValue("@id", comment.Id);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
         public void DeleteComment(int id)
         {
             using(var conn = Connection)
