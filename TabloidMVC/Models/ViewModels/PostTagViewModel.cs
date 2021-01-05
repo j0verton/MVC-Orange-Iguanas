@@ -12,5 +12,7 @@ namespace TabloidMVC.Models.ViewModels
 
         public List<Tag> AppliedTags { get; set; }
 
+        public Tag CurrentTag { get; set; }
+
     }
 }
