@@ -38,6 +38,7 @@ namespace TabloidMVC.Repositories
             }
         }
 
+        //need to double check this sql query 
         public List<Tag> GetTagsByPost(int id)
         {
             using (var conn = Connection)
@@ -45,10 +46,11 @@ namespace TabloidMVC.Repositories
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"SELECT Id, Name
+                    cmd.CommandText = @"SELECT t.Id, t.Name
                                         FROM Tag t
                                         JOIN PostTag as pt ON pt.PostId = t.Id
-                                        WHERE t.id = @id";
+                                        WHERE pt.PostId = @id";
+                    cmd.Parameters.AddWithValue("@id", id);
                     var reader = cmd.ExecuteReader();
 
                     var tags = new List<Tag>();
