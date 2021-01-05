@@ -35,7 +35,7 @@ namespace TabloidMVC.Repositories
 
                     while (reader.Read())
                     {
-                        comments.Add(NewCommentFromReader(reader));
+                        comments.Add(NewCommentWithPostFromReader(reader));
                     }
                     reader.Close();
 
@@ -43,7 +43,34 @@ namespace TabloidMVC.Repositories
                 }
                }    
         }
+        public Comment GetCommentById(int id)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                        SELECT *
+                        FROM Comment 
+                        WHERE Id = @id";
 
+                    cmd.Parameters.AddWithValue("@id", id);
+
+                    var reader = cmd.ExecuteReader();
+
+                    Comment comment = new Comment();
+
+                    if (reader.Read())
+                    {
+                        comment = NewCommentWithoutUserFromReader(reader);
+                    }
+                    reader.Close();
+
+                    return comment;
+                }
+            }
+        }
         public void AddComment(Comment comment)
         {
             using (var conn = Connection)
@@ -69,7 +96,22 @@ namespace TabloidMVC.Repositories
             }
         }
 
-        private Comment NewCommentFromReader(SqlDataReader reader)
+        public void DeleteComment(int id)
+        {
+            using(var conn = Connection)
+            {
+                conn.Open();
+                using(var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"DELETE FROM Comment WHERE Id = @id";
+                    cmd.Parameters.AddWithValue("@id", id);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        //Helper function that provides connection between post(with full info) and comment
+        private Comment NewCommentWithPostFromReader(SqlDataReader reader)
         {
             return new Comment()
             {
@@ -90,6 +132,19 @@ namespace TabloidMVC.Repositories
                     ImageLocation = DbUtils.GetNullableString(reader, "AvatarImage"),
                     UserTypeId = reader.GetInt32(reader.GetOrdinal("UserTypeId")),
                 }
+            };
+        }
+        //Helper function that builds the simplest Comment instance, without unneeded info for deleting
+        private Comment NewCommentWithoutUserFromReader(SqlDataReader reader)
+        {
+            return new Comment()
+            {
+                Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                PostId = reader.GetInt32(reader.GetOrdinal("PostId")),
+                UserProfileId = reader.GetInt32(reader.GetOrdinal("UserProfileId")),
+                Subject = reader.GetString(reader.GetOrdinal("Subject")),
+                Content = reader.GetString(reader.GetOrdinal("Content")),
+                CreateDateTime = reader.GetDateTime(reader.GetOrdinal("CreateDateTime")),
             };
         }
     }
