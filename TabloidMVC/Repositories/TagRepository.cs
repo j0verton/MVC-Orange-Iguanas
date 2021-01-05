@@ -38,6 +38,33 @@ namespace TabloidMVC.Repositories
             }
         }
 
+        public List<Tag> GetTagsByPost(int id)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"SELECT Id, Name
+                                        FROM Tag t
+                                        JOIN PostTag as pt ON pt.PostId = t.Id
+                                        WHERE t.id = @id";
+                    var reader = cmd.ExecuteReader();
+
+                    var tags = new List<Tag>();
+
+                    while (reader.Read())
+                    {
+                        tags.Add(NewTagFromReader(reader));
+                    }
+
+                    reader.Close();
+
+                    return tags;
+                }
+            }
+        }
+
         public Tag GetTagById(int id)
         {
             using (SqlConnection conn = Connection)
