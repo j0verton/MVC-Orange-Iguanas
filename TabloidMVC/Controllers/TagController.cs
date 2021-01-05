@@ -89,7 +89,8 @@ namespace TabloidMVC.Controllers
             PostTagViewModel vm = new PostTagViewModel()
             {
                 Post = _postRepository.GetPublishedPostById(id),
-                Tags = _tagRepository.GetAllTags()
+                Tags = _tagRepository.GetAllTags(),
+                AppliedTags = _tagRepository.GetTagsByPost(id)
 
             };
             return View(vm);
