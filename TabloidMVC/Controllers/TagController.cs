@@ -62,7 +62,6 @@ namespace TabloidMVC.Controllers
         // GET: TagController/Edit/5
         public ActionResult Edit(int id)
         {
-
             Tag tag = _tagRepository.GetTagById(id);
             return View(tag);
         }
@@ -90,11 +89,10 @@ namespace TabloidMVC.Controllers
             {
                 Post = new Post() { Id = id },
                 Tags = _tagRepository.GetAllTags(),
-                AppliedTags = _tagRepository.GetTagsByPost(id)
-
+                AppliedTags = _tagRepository.GetTagsByPost(id),
+                PostTags = _tagRepository.GetPostTagsByPost(id)
             };
             return View(vm);
-
         }
 
         // POST: TagController/AddToPost/5
@@ -106,7 +104,7 @@ namespace TabloidMVC.Controllers
             {
                 _tagRepository.AddTagToPost(vm.Post.Id, vm.CurrentTag.Id);
                 return RedirectToAction("Details", "Post", new { id = vm.Post.Id });
-            }            catch (Exception ex)
+            }  catch (Exception ex)
             {
                 return View(vm);
             }
@@ -118,12 +116,16 @@ namespace TabloidMVC.Controllers
             return RedirectToAction("Index");
         }
 
-        public ActionResult Remove(int id)
+        public ActionResult Remove(int id, int postId)
         {
-            //int postTagId = _postRepository._______;
-            //_tagRepository.RemoveTagFromPost(postTagId);
-            return RedirectToAction("Index");
-        }
+            try { 
+            _tagRepository.RemoveTagFromPost(id);
+            return RedirectToAction("AddToPost", new { id = postId });
+        }  catch (Exception ex)
+            {
+                return View();
+    }
+}
 
     }
 }
