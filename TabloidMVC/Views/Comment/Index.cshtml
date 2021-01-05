@@ -4,12 +4,11 @@
     ViewData["Title"] = "Index";
 }
 <div class="container pt-5">
-    <h1>Comment Section</h1>
+    <h1>Comment Section for @Model.ParentPost.Title</h1>
 
-
-    @*<p>
+    <p>
         <a class="btn btn-primary" asp-action="Create" asp-route-id="@Model.ParentPost.Id">New Post</a>
-    </p>*@
+    </p>
     <table class="table table-striped">
         <thead>
             <tr>

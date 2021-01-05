@@ -9,6 +9,7 @@ using TabloidMVC.Repositories;
 using TabloidMVC.Models;
 using TabloidMVC.Models.ViewModels;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Routing;
 
 namespace TabloidMVC.Controllers
 {
@@ -71,7 +72,7 @@ namespace TabloidMVC.Controllers
             {
                 _commentRepository.AddComment(vm.NewComment);
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", new { id = vm.NewComment.PostId });
             }
             catch
             {
