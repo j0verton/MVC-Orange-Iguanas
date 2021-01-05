@@ -105,9 +105,8 @@ namespace TabloidMVC.Controllers
             try
             {
                 _tagRepository.AddTagToPost(vm.Post.Id, vm.CurrentTag.Id);
-                return RedirectToAction("Index");
-            }
-            catch (Exception ex)
+                return RedirectToAction("Details", "Post", new { id = vm.Post.Id });
+            }            catch (Exception ex)
             {
                 return View(vm);
             }
