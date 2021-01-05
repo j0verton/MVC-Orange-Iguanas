@@ -106,17 +106,18 @@ namespace TabloidMVC.Controllers
         // GET: HomeController1/Delete/5
         public ActionResult Delete(int id)
         {
+            _commentRepository.GetCommentById(id);
             return View();
         }
 
         // POST: HomeController1/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id)
+        public ActionResult Delete(int id, Comment comment)
         {
             try
             {
-                _commentRepository.AddComment(id);
+
                 return RedirectToAction(nameof(Index));
             }
             catch
