@@ -42,7 +42,7 @@ namespace TabloidMVC.Repositories
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"INSERT INTO Category (Name) VALUES (@Name);";
+                    cmd.CommandText = @"INSERT INTO Category (Name, Active) VALUES (@Name, 1);";
 
                     cmd.Parameters.AddWithValue("@Name", category.Name);
 
