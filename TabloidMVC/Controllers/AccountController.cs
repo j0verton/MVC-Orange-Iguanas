@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -52,6 +53,26 @@ namespace TabloidMVC.Controllers
                 new ClaimsPrincipal(claimsIdentity));
 
             return RedirectToAction("Index", "Home");
+        }
+
+        public IActionResult Register()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Register(UserProfile user)
+        {
+            try
+            {
+                user.CreateDateTime = DateTime.Now;
+                _userProfileRepository.RegisterUser(user);
+                return RedirectToAction("Index", "Home");
+            }
+            catch
+            {
+                return View(user);
+            }
         }
 
         public async Task<IActionResult> Logout()
