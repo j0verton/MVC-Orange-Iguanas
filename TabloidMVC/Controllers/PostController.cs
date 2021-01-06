@@ -80,12 +80,6 @@ namespace TabloidMVC.Controllers
         public IActionResult Delete(int id)
         {
             Post post = _postRepository.GetUserPostById(id, GetCurrentUserProfileId());
-            Uri uriResult;
-            bool result = Uri.TryCreate(post.ImageLocation, UriKind.Absolute, out uriResult) && uriResult.Scheme == Uri.UriSchemeHttp;
-            if (!result)
-            {
-                post.ImageLocation = "";
-            }
             return View(post);
         }
         [HttpPost]

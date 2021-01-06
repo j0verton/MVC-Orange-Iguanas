@@ -6,7 +6,7 @@
 
 <h1>Delete</h1>
 
-<h3>Are you sure you want to delete @Model.Title?</h3>
+<h3>Are you sure you want to delete This?</h3>
 <div>
     <hr />
     <div class="container pt-5">
@@ -20,18 +20,6 @@
                 <p class="text-secondary">Written by @Model.UserProfile.DisplayName</p>
                 <p class="text-black-50">Published on @Html.DisplayFor(model => model.PublishDateTime)</p>
             </div>
-        </section>
-        <hr />
-        @if (!string.IsNullOrWhiteSpace(Model.ImageLocation))
-        {
-            <section class="row justify-content-center">
-                <div>
-                    <img src="@Model.ImageLocation" />
-                </div>
-            </section>
-        }
-        <section class="row post__content">
-            <p class="col-sm-12 mt-5">@Html.DisplayFor(model => model.Content)</p>
         </section>
     </div>
 </div>
