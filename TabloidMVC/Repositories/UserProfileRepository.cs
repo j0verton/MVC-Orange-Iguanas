@@ -101,7 +101,7 @@ namespace TabloidMVC.Repositories
                 }
             }
         }
-        public List<UserProfile> GetAllUserProfiles()
+        public List<UserProfile> GetAllActiveUserProfiles()
         {
             using (var conn = Connection)
             {
@@ -141,11 +141,59 @@ namespace TabloidMVC.Repositories
 
                     reader.Close();
 
-                    return profiles.OrderBy(profile => profile.DisplayName).ToList();
+                    // This first orders the list by the User's Display Name, and then sorts out any UserTypes that are Inactive
+                    // - It then changes the IEnumerable<> type back to a list with the .ToList() method at the end.
+                    return profiles.OrderBy(profile => profile.DisplayName).Where(profile => profile.UserTypeId != 3).ToList();
                 }
             }
         }
-        public void DeactiveUser(int id)
+        public List<UserProfile> GetAllInactiveUserProfiles()
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                       SELECT u.id, u.FirstName, u.LastName, u.DisplayName, u.Email,
+                              u.CreateDateTime, u.ImageLocation, u.UserTypeId,
+                              ut.[Name] AS UserTypeName
+                         FROM UserProfile u
+                              LEFT JOIN UserType ut ON u.UserTypeId = ut.id;";
+
+                    var reader = cmd.ExecuteReader();
+
+                    var profiles = new List<UserProfile>();
+
+                    while (reader.Read())
+                    {
+                        profiles.Add(new UserProfile()
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            Email = reader.GetString(reader.GetOrdinal("Email")),
+                            FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                            LastName = reader.GetString(reader.GetOrdinal("LastName")),
+                            DisplayName = reader.GetString(reader.GetOrdinal("DisplayName")),
+                            CreateDateTime = reader.GetDateTime(reader.GetOrdinal("CreateDateTime")),
+                            ImageLocation = DbUtils.GetNullableString(reader, "ImageLocation"),
+                            UserTypeId = reader.GetInt32(reader.GetOrdinal("UserTypeId")),
+                            UserType = new UserType()
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("UserTypeId")),
+                                Name = reader.GetString(reader.GetOrdinal("UserTypeName"))
+                            },
+                        });
+                    }
+
+                    reader.Close();
+
+                    // This first orders the list by the User's Display Name, and then returns any UserTypes that are Inactive
+                    // - It then changes the IEnumerable<> type back to a list with the .ToList() method at the end.
+                    return profiles.OrderBy(profile => profile.DisplayName).Where(profile => profile.UserTypeId == 3).ToList();
+                }
+            }
+        }
+        public void DeactivateUser(int id)
         {
             using (var conn = Connection)
             {
@@ -154,6 +202,22 @@ namespace TabloidMVC.Repositories
                 {
                     cmd.CommandText = @"UPDATE UserProfile
                                         SET UserTypeId = 3
+                                        WHERE Id = @id;";
+                    cmd.Parameters.AddWithValue("@id", id);
+                    cmd.ExecuteNonQuery();
+
+                }
+            }
+        }
+        public void ReactivateUser(int id)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"UPDATE UserProfile
+                                        SET UserTypeId = 2
                                         WHERE Id = @id;";
                     cmd.Parameters.AddWithValue("@id", id);
                     cmd.ExecuteNonQuery();
