@@ -24,6 +24,7 @@ namespace TabloidMVC.Controllers
             return View();
         }
 
+
         [HttpPost]
         public async Task<IActionResult> Login(Credentials credentials)
         {
@@ -67,7 +68,14 @@ namespace TabloidMVC.Controllers
             {
                 user.CreateDateTime = DateTime.Now;
                 _userProfileRepository.RegisterUser(user);
-                return RedirectToAction("Index", "Home");
+                //creating a new credential to be passed into the Login method using newly registered UserProfile user
+                Credentials credential = new Credentials
+                {
+                    Email = user.Email,
+
+                };
+
+                return RedirectToAction("Login", "AccountController");
             }
             catch
             {
