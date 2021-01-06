@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -22,6 +23,7 @@ namespace TabloidMVC.Controllers
         {
             return View();
         }
+
 
         [HttpPost]
         public async Task<IActionResult> Login(Credentials credentials)
@@ -57,6 +59,42 @@ namespace TabloidMVC.Controllers
                 new ClaimsPrincipal(claimsIdentity));
 
             return RedirectToAction("Index", "Home");
+        }
+
+        public IActionResult Register()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Register(UserProfile user)
+        {
+            
+            try
+            {  
+                user.CreateDateTime = DateTime.Now;
+                _userProfileRepository.RegisterUser(user);
+                //creating a new credential to be passed into the Login method using newly registered UserProfile user               
+                var claims = new List<Claim>
+                {
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Email, user.Email),
+                     //new Claim(ClaimTypes.Role, "Author")
+                 };
+                var claimsIdentity = new ClaimsIdentity(
+                claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                await HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsIdentity));
+
+                return RedirectToAction("Index", "Home");
+            }
+            
+            catch
+            {
+                return View(user);
+            }
         }
 
         public async Task<IActionResult> Logout()

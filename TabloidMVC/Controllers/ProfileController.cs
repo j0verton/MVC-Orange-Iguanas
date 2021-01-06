@@ -97,11 +97,12 @@ namespace TabloidMVC.Controllers
         public ActionResult Deactivate(int id, UserProfile userProfile)
         {
             int AdminCount = _userProfileRepo.GetAllUserProfiles().Where(user => user.UserTypeId == 1).Count();
-
-            if (AdminCount == 1 && userProfile.UserTypeId == 1)
+            UserProfile user = _userProfileRepo.GetById(id);
+            if (AdminCount == 1 && user.UserTypeId == 1)
             {
-                ModelState.AddModelError("UserTypeId", "System must contain 1 active Admin, please add a new Admin before removing");
-                return View(userProfile);
+                user.UserTypeId = 3;
+                //ModelState.AddModelError("UserTypeId", "System must contain 1 active Admin, please add a new Admin before removing");
+                return RedirectToAction("Edit", user);
             }
             try
             {
