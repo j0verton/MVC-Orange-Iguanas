@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TabloidMVC.Models;
 using TabloidMVC.Repositories;
 
 namespace TabloidMVC.Controllers
@@ -27,8 +28,8 @@ namespace TabloidMVC.Controllers
         // GET: ProfileController/Details/5
         public ActionResult Details(int id)
         {
-
-            return View();
+            UserProfile user = _userProfileRepo.GetById(id); 
+            return View(user);
         }
 
         // GET: ProfileController/Create
