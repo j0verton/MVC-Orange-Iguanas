@@ -67,12 +67,14 @@ namespace TabloidMVC.Controllers
         {
             try
             {
-
-                return RedirectToAction(nameof(Index));
+                //make this a list of admins then throw and exception if its 1
+                _userProfileRepo.GetAllUserProfiles();
+                _userProfileRepo.EditUser(user);
+                return RedirectToAction("Details", new { id = id});
             }
-            catch
+            catch(Exception ex)
             {
-                return View();
+                return View("Edit", new { id = id, user = user });
             }
         }
 
