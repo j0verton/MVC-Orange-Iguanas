@@ -185,7 +185,6 @@ namespace TabloidMVC.Repositories
                     cmd.Parameters.AddWithValue("@fname", user.FirstName);
                     cmd.Parameters.AddWithValue("@lname", user.LastName);
                     cmd.Parameters.AddWithValue("@email", user.Email);
-                    //need to make some code to protects agains nulls
                     cmd.Parameters.AddWithValue("@imgloc", DbUtils.ValueOrDBNull(user.ImageLocation));
                     cmd.Parameters.AddWithValue("@uidtype", user.UserTypeId);
                     cmd.Parameters.AddWithValue("@id", user.Id);

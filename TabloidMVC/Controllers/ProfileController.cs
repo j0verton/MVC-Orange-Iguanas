@@ -68,7 +68,13 @@ namespace TabloidMVC.Controllers
             try
             {
                 //make this a list of admins then throw and exception if its 1
-                _userProfileRepo.GetAllUserProfiles();
+                int AdminCount = _userProfileRepo.GetAllUserProfiles().Where(user => user.UserTypeId == 1).Count();
+
+                if (AdminCount == 1)
+                {
+                    ModelState.AddModelError("UserTypeId", "System must contain 1 active Admin, please add a new Admin before removing");
+                    return View("Edit", new { id = id, user = user });
+                }
                 _userProfileRepo.EditUser(user);
                 return RedirectToAction("Details", new { id = id});
             }
