@@ -21,7 +21,8 @@ namespace TabloidMVC.Repositories
                 using (var cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"SELECT Id, Name
-                                        FROM Tag";
+                                        FROM Tag
+                                        WHERE Active=1";
                     var reader = cmd.ExecuteReader();
 
                     var tags = new List<Tag>();
@@ -141,9 +142,9 @@ namespace TabloidMVC.Repositories
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"INSERT INTO Tag (Name)
+                    cmd.CommandText = @"INSERT INTO Tag (Name, Active)
                                         OUTPUT INSERTED.ID
-                                        VALUES(@Name)";
+                                        VALUES(@Name, 1)";
                     cmd.Parameters.AddWithValue("@Name", tag.Name);
 
 
@@ -205,7 +206,7 @@ namespace TabloidMVC.Repositories
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                            DELETE FROM Tag
+                            UPDATE Tag SET [Active]=0
                             WHERE Id = @id
                         ";
 
