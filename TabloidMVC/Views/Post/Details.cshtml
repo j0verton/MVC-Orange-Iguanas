@@ -25,6 +25,9 @@
                 <a asp-controller="Comment" asp-action="Index" asp-route-id="@Model.Id" class="btn btn-outline-primary mx-1" title="Show all Comments">
                     <i class="far fa-comments"></i>
                 </a>
+                <a asp-controller="Tag" asp-action="AddToPost" asp-route-id="@Model.Id" class="btn btn-outline-primary mx-1" title="Manage Tags">
+                    <i class="fas fa-tags"></i>
+                </a>
             </div>
         </section>
         <hr />

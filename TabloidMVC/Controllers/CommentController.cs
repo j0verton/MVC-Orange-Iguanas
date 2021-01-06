@@ -28,7 +28,19 @@ namespace TabloidMVC.Controllers
         // GET: HomeController1
         public ActionResult Index(int id)
         {
+            var currentUser = GetCurrentUser();
             List<Comment> comments = _commentRepository.GetCommentsByPostId(id);
+            foreach(Comment comment in comments)
+            {
+                if(comment.UserProfileId == currentUser)
+                {
+                    comment.CurrentUser = true;
+                }
+                else
+                {
+                    comment.CurrentUser = false;
+                }
+            }
             Post post = _postRepository.GetPublishedPostById(id);
 
             CommentCreateViewModel vm = new CommentCreateViewModel
