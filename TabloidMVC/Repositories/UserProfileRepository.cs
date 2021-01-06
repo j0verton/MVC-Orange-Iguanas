@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 using System.Linq;
 using TabloidMVC.Models;
@@ -9,6 +10,34 @@ namespace TabloidMVC.Repositories
     public class UserProfileRepository : BaseRepository, IUserProfileRepository
     {
         public UserProfileRepository(IConfiguration config) : base(config) { }
+
+        public void RegisterUser(UserProfile user)
+        {
+            using(var conn = Connection)
+            {
+                conn.Open();
+                using(var cmd = conn.CreateCommand())
+                {
+                    //Reminder, This will always make UserTypeId = 2
+                    cmd.CommandText = @"INSERT INTO UserProfile (
+                                        DisplayName, FirstName, LastName,
+                                        Email, CreateDateTime, ImageLocation,
+                                        UserTypeId )
+                                        OUTPUT INSERTED.ID
+                                        VALUES (@DisplayName, @FirstName, @LastName,
+                                                @Email, @CreateDateTime, @ImageLocation,
+                                                2)";
+                    cmd.Parameters.AddWithValue(@"DisplayName", user.DisplayName);
+                    cmd.Parameters.AddWithValue(@"FirstName", user.FirstName);
+                    cmd.Parameters.AddWithValue(@"LastName", user.LastName);
+                    cmd.Parameters.AddWithValue(@"Email", user.Email);
+                    cmd.Parameters.AddWithValue(@"CreateDateTime", user.CreateDateTime);
+                    cmd.Parameters.AddWithValue("@ImageLocation", DbUtils.ValueOrDBNull(user.ImageLocation));
+
+                    user.Id = (int)cmd.ExecuteScalar();
+                }
+            }
+        }
 
         public UserProfile GetByEmail(string email)
         {
@@ -48,9 +77,7 @@ namespace TabloidMVC.Repositories
                             },
                         };
                     }
-
                     reader.Close();
-
                     return userProfile;
                 }
             }
@@ -94,9 +121,7 @@ namespace TabloidMVC.Repositories
                             },
                         };
                     }
-
                     reader.Close();
-
                     return userProfile;
                 }
             }
@@ -209,6 +234,37 @@ namespace TabloidMVC.Repositories
                 }
             }
         }
+
+        public void EditUser(UserProfile user)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                            UPDATE UserProfile
+                            SET [DisplayName] = @displayname,
+                            [FirstName] = @fname,
+                            [LastName] = @lname,
+                            [Email] = @email,
+                            [ImageLocation] = @imgloc,
+                            [UserTypeId] = @uidtype
+                            WHERE Id = @id";
+
+                    cmd.Parameters.AddWithValue("@displayname", user.DisplayName);
+                    cmd.Parameters.AddWithValue("@fname", user.FirstName);
+                    cmd.Parameters.AddWithValue("@lname", user.LastName);
+                    cmd.Parameters.AddWithValue("@email", user.Email);
+                    cmd.Parameters.AddWithValue("@imgloc", DbUtils.ValueOrDBNull(user.ImageLocation));
+                    cmd.Parameters.AddWithValue("@uidtype", user.UserTypeId);
+                    cmd.Parameters.AddWithValue("@id", user.Id);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
         public void ReactivateUser(int id)
         {
             using (var conn = Connection)
@@ -226,4 +282,5 @@ namespace TabloidMVC.Repositories
             }
         }
     }
+
 }

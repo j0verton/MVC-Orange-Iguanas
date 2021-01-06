@@ -56,21 +56,31 @@ namespace TabloidMVC.Controllers
         // GET: ProfileController/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            UserProfile user = _userProfileRepo.GetById(id);
+            return View(user);
         }
 
         // POST: ProfileController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(UserProfile user)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                //make this a list of admins then throw and exception if its 1
+                int AdminCount = _userProfileRepo.GetAllUserProfiles().Where(user => user.UserTypeId == 1).Count();
+
+                if (AdminCount == 1 && user.UserTypeId != 1)
+                {
+                    ModelState.AddModelError("UserTypeId", "System must contain 1 active Admin, please add a new Admin before removing");
+                    return View(user);
+                }
+                _userProfileRepo.EditUser(user);
+                return RedirectToAction("Details", new { id = user.Id});
             }
-            catch
+            catch(Exception ex)
             {
-                return View();
+                return View(user);
             }
         }
 
@@ -86,6 +96,14 @@ namespace TabloidMVC.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Deactivate(int id, UserProfile userProfile)
         {
+            int AdminCount = _userProfileRepo.GetAllUserProfiles().Where(user => user.UserTypeId == 1).Count();
+            UserProfile user = _userProfileRepo.GetById(id);
+            if (AdminCount == 1 && user.UserTypeId == 1)
+            {
+                user.UserTypeId = 3;
+                //ModelState.AddModelError("UserTypeId", "System must contain 1 active Admin, please add a new Admin before removing");
+                return RedirectToAction("Edit", user);
+            }
             try
             {
                 _userProfileRepo.DeactivateUser(id);
