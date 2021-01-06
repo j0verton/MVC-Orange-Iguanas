@@ -8,6 +8,10 @@ namespace TabloidMVC.Repositories
         UserProfile GetByEmail(string email);
 
         public List<UserProfile> GetAllUserProfiles();
+<<<<<<< HEAD
        void RegisterUser(UserProfile user);
+=======
+        UserProfile GetById(int id);
+>>>>>>> master
     }
 }
