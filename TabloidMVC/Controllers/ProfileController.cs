@@ -63,24 +63,24 @@ namespace TabloidMVC.Controllers
         // POST: ProfileController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, UserProfile user)
+        public ActionResult Edit(UserProfile user)
         {
             try
             {
                 //make this a list of admins then throw and exception if its 1
                 int AdminCount = _userProfileRepo.GetAllUserProfiles().Where(user => user.UserTypeId == 1).Count();
 
-                if (AdminCount == 1)
+                if (AdminCount == 1 && user.UserTypeId != 1)
                 {
                     ModelState.AddModelError("UserTypeId", "System must contain 1 active Admin, please add a new Admin before removing");
-                    return View("Edit", new { id = id, user = user });
+                    return View(user);
                 }
                 _userProfileRepo.EditUser(user);
-                return RedirectToAction("Details", new { id = id});
+                return RedirectToAction("Details", new { id = user.Id});
             }
             catch(Exception ex)
             {
-                return View("Edit", new { id = id, user = user });
+                return View(user);
             }
         }
 
