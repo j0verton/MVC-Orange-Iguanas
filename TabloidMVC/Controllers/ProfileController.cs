@@ -96,6 +96,13 @@ namespace TabloidMVC.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Deactivate(int id, UserProfile userProfile)
         {
+            int AdminCount = _userProfileRepo.GetAllUserProfiles().Where(user => user.UserTypeId == 1).Count();
+
+            if (AdminCount == 1 && userProfile.UserTypeId == 1)
+            {
+                ModelState.AddModelError("UserTypeId", "System must contain 1 active Admin, please add a new Admin before removing");
+                return View(userProfile);
+            }
             try
             {
                 _userProfileRepo.DeactiveUser(id);
