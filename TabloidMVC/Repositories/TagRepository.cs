@@ -38,6 +38,72 @@ namespace TabloidMVC.Repositories
             }
         }
 
+        //need to double check this sql query 
+        public List<Tag> GetTagsByPost(int id)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"SELECT t.Id, t.Name
+                                        FROM Tag t
+                                        JOIN PostTag as pt ON pt.PostId = t.Id
+                                        WHERE pt.PostId = @id";
+                    cmd.Parameters.AddWithValue("@id", id);
+                    var reader = cmd.ExecuteReader();
+
+                    var tags = new List<Tag>();
+
+                    while (reader.Read())
+                    {
+                        tags.Add(NewTagFromReader(reader));
+                    }
+
+                    reader.Close();
+
+                    return tags;
+                }
+            }
+        }
+        //this is my issue always returning posttags with an internal tag of id 1
+        public List<PostTag> GetPostTagsByPost(int id)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"SELECT t.Id, t.Name, pt.Id AS PostTagId, pt.PostId
+                                        FROM Tag t
+                                        JOIN PostTag as pt ON pt.TagId = t.Id
+                                        WHERE pt.PostId = @id";
+                    cmd.Parameters.AddWithValue("@id", id);
+                    var reader = cmd.ExecuteReader();
+
+                    var tags = new List<PostTag>();
+
+                    while (reader.Read())
+                    {
+                        PostTag posttag = new PostTag()
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("PostTagId")),
+                            PostId = reader.GetInt32(reader.GetOrdinal("PostId")),
+                            Tag = new Tag()
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                Name = reader.GetString(reader.GetOrdinal("Name")),
+                            },
+                            TagId = reader.GetInt32(reader.GetOrdinal("Id")),
+                        };
+                        tags.Add(posttag);
+                    }
+                    reader.Close();
+                    return tags;
+                }
+            }
+        }
+
         public Tag GetTagById(int id)
         {
             using (SqlConnection conn = Connection)
@@ -86,6 +152,29 @@ namespace TabloidMVC.Repositories
             }
         }
 
+        public void AddTagToPost(int tagId, int postId)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                        INSERT INTO PostTag (
+                        PostId, TagId )
+                        OUTPUT INSERTED.ID
+                        VALUES (
+                        @postid, @tagid )";
+                    cmd.Parameters.AddWithValue("@postid", postId);
+                    cmd.Parameters.AddWithValue("@tagid", tagId);
+                    cmd.ExecuteScalar();
+                    //post.Id = (int)cmd.ExecuteScalar();
+
+
+                }
+            }
+        }
+
         public void EditTag(Tag tag)
         {
             using (SqlConnection conn = Connection)
@@ -126,6 +215,24 @@ namespace TabloidMVC.Repositories
                 }
             }
         }
+        
+        public void RemoveTagFromPost(int postTagId)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                        DELETE FROM PostTag 
+                        WHERE id = @id";
+                    cmd.Parameters.AddWithValue("@id", postTagId);
+                    cmd.ExecuteScalar();
+
+                }
+            }
+        }
+
 
 
         private Tag NewTagFromReader(SqlDataReader reader)
