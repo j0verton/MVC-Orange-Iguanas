@@ -48,7 +48,7 @@ namespace TabloidMVC.Repositories
                 {
                     cmd.CommandText = @"SELECT t.Id, t.Name
                                         FROM Tag t
-                                        JOIN PostTag as pt ON pt.PostId = t.Id
+                                        LEFT JOIN PostTag pt ON pt.TagId = t.Id
                                         WHERE pt.PostId = @id";
                     cmd.Parameters.AddWithValue("@id", id);
                     var reader = cmd.ExecuteReader();
