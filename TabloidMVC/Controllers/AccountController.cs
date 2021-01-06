@@ -67,21 +67,30 @@ namespace TabloidMVC.Controllers
         }
 
         [HttpPost]
-        public IActionResult Register(UserProfile user)
+        public async Task<IActionResult> Register(UserProfile user)
         {
+            
             try
-            {
+            {  
                 user.CreateDateTime = DateTime.Now;
                 _userProfileRepository.RegisterUser(user);
-                //creating a new credential to be passed into the Login method using newly registered UserProfile user
-                Credentials credential = new Credentials
+                //creating a new credential to be passed into the Login method using newly registered UserProfile user               
+                var claims = new List<Claim>
                 {
-                    Email = user.Email,
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Email, user.Email),
+                     //new Claim(ClaimTypes.Role, "Author")
+                 };
+                var claimsIdentity = new ClaimsIdentity(
+                claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-                };
+                await HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsIdentity));
 
-                return RedirectToAction("Login", "AccountController");
+                return RedirectToAction("Index", "Home");
             }
+            
             catch
             {
                 return View(user);
