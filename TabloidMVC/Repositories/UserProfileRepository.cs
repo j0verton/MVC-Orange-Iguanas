@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 using System.Linq;
 using TabloidMVC.Models;
@@ -145,5 +146,37 @@ namespace TabloidMVC.Repositories
                 }
             }
         }
+
+        public void EditUser(UserProfile user)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                            UPDATE UserProfile
+                            SET [DisplyName] = @displayname
+                            SET [FirstName] = @fname
+                            SET [LastName] = @lname
+                            SET [Email] = @email
+                            SET [ImageLocation] = @imgloc
+                            SET [UserTypeId] = @uidtype
+                            WHERE Id = @id";
+
+                    cmd.Parameters.AddWithValue("@displayname", user.DisplayName);
+                    cmd.Parameters.AddWithValue("@fname", user.FirstName);
+                    cmd.Parameters.AddWithValue("@lname", user.LastName);
+                    cmd.Parameters.AddWithValue("@email", user.Email);
+                    cmd.Parameters.AddWithValue("@imgloc", user.ImageLocation);
+                    cmd.Parameters.AddWithValue("@uidtype", user.UserTypeId);
+                    cmd.Parameters.AddWithValue("@id", user.Id);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
     }
+
 }
