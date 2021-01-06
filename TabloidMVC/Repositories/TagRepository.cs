@@ -66,7 +66,7 @@ namespace TabloidMVC.Repositories
                 }
             }
         }
-        //this is my issue always returning posttags with an internal tag of id 1
+        
         public List<PostTag> GetPostTagsByPost(int id)
         {
             using (var conn = Connection)
