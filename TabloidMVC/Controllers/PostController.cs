@@ -100,9 +100,14 @@ namespace TabloidMVC.Controllers
         public ActionResult Edit(int id)
         {
             Post post = _postRepository.GetPublishedPostById(id);
-            if(post==null || post.UserProfileId != GetCurrentUserProfileId())
+            if (post == null)
             {
-                return NotFound();
+                int userId = GetCurrentUserProfileId();
+                post = _postRepository.GetUserPostById(id, userId);
+                if (post == null || post.UserProfileId != GetCurrentUserProfileId())
+                {
+                    return NotFound();
+                }
             }
             var vm = new PostCreateViewModel();
             vm.Post = post;
