@@ -11,6 +11,7 @@ using TabloidMVC.Models.ViewModels;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.VisualBasic;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TabloidMVC.Controllers
 {
@@ -18,11 +19,13 @@ namespace TabloidMVC.Controllers
     {
         private readonly ICommentRepository _commentRepository;
         private readonly IPostRepository _postRepository;
+        private readonly IUserProfileRepository _userProfileRepository;
 
-        public CommentController(ICommentRepository commentRepository, IPostRepository postRepository)
+        public CommentController(ICommentRepository commentRepository, IPostRepository postRepository, IUserProfileRepository userProfileRepository)
         {
             _commentRepository = commentRepository;
             _postRepository = postRepository;
+            _userProfileRepository = userProfileRepository;
         }
         
         // GET: HomeController1
@@ -58,6 +61,7 @@ namespace TabloidMVC.Controllers
             return View();
         }
 
+        [Authorize(Roles = "Admin, Author")]
         // GET: HomeController1/Create
         public ActionResult Create(int id)
         {
@@ -72,7 +76,7 @@ namespace TabloidMVC.Controllers
             };
             return View(vm);
         }
-
+        [Authorize(Roles = "Admin, Author")]
         // POST: HomeController1/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -92,11 +96,16 @@ namespace TabloidMVC.Controllers
                 return View(vm);
             }
         }
-
+        
         // GET: HomeController1/Edit/5
         public ActionResult Edit(int id)
         {
+            var user = _userProfileRepository.GetById(GetCurrentUser());
             Comment comment = _commentRepository.GetCommentById(id);
+            if(comment.UserProfileId != user.Id && user.UserTypeId != 1)
+            {
+                return RedirectToAction("Error", "Shared");
+            }
             return View(comment);
         }
 
@@ -119,7 +128,12 @@ namespace TabloidMVC.Controllers
         // GET: HomeController1/Delete/5
         public ActionResult Delete(int id)
         {
+            var user = _userProfileRepository.GetById(GetCurrentUser());
             Comment comment = _commentRepository.GetCommentById(id);
+            if (comment.UserProfileId != user.Id && user.UserTypeId != 1)
+            {
+                return RedirectToAction("Error", "Shared");
+            }
             return View(comment);
         }
 
