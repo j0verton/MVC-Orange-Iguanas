@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -30,7 +31,7 @@ namespace TabloidMVC.Controllers
         {
             return View();
         }
-
+        [Authorize(Roles ="Admin")]
         // GET: CategoryController/Create
         public ActionResult Create()
         {
@@ -40,6 +41,7 @@ namespace TabloidMVC.Controllers
         // POST: CategoryController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public ActionResult Create(Category category)
         {
             try
@@ -55,6 +57,7 @@ namespace TabloidMVC.Controllers
         }
 
         // GET: CategoryController/Edit/5
+        [Authorize(Roles = "Admin")]
         public ActionResult Edit(int id)
         {
             Category category = _categoryRepository.getCategorybyId(id);
@@ -62,6 +65,7 @@ namespace TabloidMVC.Controllers
         }
 
         // POST: CategoryController/Edit/5
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, Category category)
@@ -78,6 +82,7 @@ namespace TabloidMVC.Controllers
         }
 
         // GET: CategoryController/Delete/5
+        [Authorize(Roles = "Admin")]
         public ActionResult Delete(int id)
         {
             Category category = _categoryRepository.getCategorybyId(id);
@@ -87,6 +92,7 @@ namespace TabloidMVC.Controllers
         // POST: CategoryController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public ActionResult Delete(int id, Category category)
         {
             try
