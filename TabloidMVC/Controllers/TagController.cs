@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using TabloidMVC.Models;
 using TabloidMVC.Models.ViewModels;
@@ -22,27 +23,29 @@ namespace TabloidMVC.Controllers
             _postRepository = postRepository;
         }
 
-    // GET: TagController
+        [Authorize(Roles = "Admin")]
+        // GET: TagController
         public IActionResult Index()
         {
             var tags = _tagRepository.GetAllTags();
             return View(tags);
         }
-        
+
+        [Authorize(Roles = "Admin")]
         // GET: TagController/Details/5
         public ActionResult Details(int id)
         {
             
             return View();
         }
-
+        [Authorize(Roles = "Admin")]
         // GET: TagController/Create
         public ActionResult Create()
         {
 
             return View();
         }
-
+        [Authorize(Roles = "Admin")]
         // POST: TagController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -58,14 +61,14 @@ namespace TabloidMVC.Controllers
                 return View();
             }
         }
-
+        [Authorize(Roles = "Admin")]
         // GET: TagController/Edit/5
         public ActionResult Edit(int id)
         {
             Tag tag = _tagRepository.GetTagById(id);
             return View(tag);
         }
-
+        [Authorize(Roles = "Admin")]
         // POST: TagController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -81,10 +84,16 @@ namespace TabloidMVC.Controllers
                 return View(tag);
             }
         }
-
+        [Authorize(Roles = "Admin, Author")]
         // GET: TagController/AddToPost/5
         public ActionResult AddToPost(int id)
         {
+            Post post = _postRepository.GetPostByUserId(id)
+            //if --- adding a logic here for allowing only on posts
+            if (GetCurrentUser() == ) 
+            { 
+            
+            }
             PostTagViewModel vm = new PostTagViewModel()
             {
                 Post = new Post() { Id = id },
@@ -95,6 +104,7 @@ namespace TabloidMVC.Controllers
             return View(vm);
         }
 
+        [Authorize(Roles = "Admin, Author")]
         // POST: TagController/AddToPost/5
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -109,23 +119,29 @@ namespace TabloidMVC.Controllers
                 return View(vm);
             }
         }
-
+        [Authorize(Roles = "Admin")]
         public ActionResult Delete(int id)
         {
             _tagRepository.DeleteTag(id);
             return RedirectToAction("Index");
         }
 
+        [Authorize(Roles = "Admin, Author")]
         public ActionResult Remove(int id, int postId)
         {
             try { 
-            _tagRepository.RemoveTagFromPost(id);
-            return RedirectToAction("AddToPost", new { id = postId });
-        }  catch (Exception ex)
+                _tagRepository.RemoveTagFromPost(id);
+                return RedirectToAction("AddToPost", new { id = postId });
+            }  catch (Exception ex)
             {
                 return View();
-    }
-}
+            }
+        }
+        public int GetCurrentUser()
+        {
+            int id = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            return id;
+        }
 
     }
 }
