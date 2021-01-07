@@ -76,6 +76,7 @@ namespace TabloidMVC.Controllers
             }
         }
 
+        //currently authors cant edit their own profiles
         // GET: ProfileController/Edit/5
         [Authorize(Roles = "Admin")]
         public ActionResult Edit(int id)
@@ -93,9 +94,10 @@ namespace TabloidMVC.Controllers
             try
             {
                 //make this a list of admins then throw and exception if its 1
-                int AdminCount = _userProfileRepo.GetAllActiveUserProfiles().Where(user => user.UserTypeId == 1).Count();
-
-                if (AdminCount == 1 && user.UserTypeId != 1)
+                List<UserProfile> Admins = _userProfileRepo.GetAllActiveUserProfiles().Where(user => user.UserTypeId == 1).ToList();
+                int AdminCount = Admins.Count();
+                UserProfile AdminUser = Admins.FirstOrDefault(admin => admin.Id == user.Id);
+                if (AdminUser != null && AdminCount == 1 && user.UserTypeId != 1)
                 {
                     ModelState.AddModelError("UserTypeId", "System must contain 1 active Admin, please add a new Admin before removing");
                     return View(user);
