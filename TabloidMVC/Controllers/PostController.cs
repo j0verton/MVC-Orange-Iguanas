@@ -104,9 +104,9 @@ namespace TabloidMVC.Controllers
             { 
                 Post post = _postRepository.GetUserPostById(id, GetCurrentUserProfileId());
                 if (post == null)
-                { 
-                    return RedirectToAction("Details", new { id =id })
-                }
+                {
+                    return RedirectToAction("Details", new { id = id });
+                };
                 return View(post);
             }
         }
