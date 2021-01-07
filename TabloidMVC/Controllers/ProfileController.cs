@@ -39,7 +39,7 @@ namespace TabloidMVC.Controllers
             return View(user);
         }
         // GET: ProfileController/Details
-        public ActionResult Details()
+        public ActionResult UserProfile()
         {
             UserProfile user = _userProfileRepo.GetByEmail(GetCurrentUserEmail());
             return View(user);
