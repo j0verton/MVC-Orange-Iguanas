@@ -88,12 +88,13 @@ namespace TabloidMVC.Controllers
         // GET: TagController/AddToPost/5
         public ActionResult AddToPost(int id)
         {
-            Post post = _postRepository.GetPostByUserId(id)
+            int userId = GetCurrentUser();
+            Post post = _postRepository.GetUserPostById(id, userId);
             //if --- adding a logic here for allowing only on posts
-            if (GetCurrentUser() == ) 
-            { 
-            
-            }
+            if (post == null) 
+            {
+                return RedirectToAction("Post", "Details", new { id = id });
+            };
             PostTagViewModel vm = new PostTagViewModel()
             {
                 Post = new Post() { Id = id },
