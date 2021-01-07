@@ -49,6 +49,10 @@ namespace TabloidMVC.Controllers
             if (userProfile.UserTypeId == 1)
             {
                 claims.Add(new Claim(ClaimTypes.Role, "Admin"));
+            } 
+            else if (userProfile.UserTypeId == 2)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, "Author"));
             }
 
             var claimsIdentity = new ClaimsIdentity(
@@ -79,7 +83,7 @@ namespace TabloidMVC.Controllers
                 {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Email, user.Email),
-                     //new Claim(ClaimTypes.Role, "Author")
+                     new Claim(ClaimTypes.Role, "Author")
                  };
                 var claimsIdentity = new ClaimsIdentity(
                 claims, CookieAuthenticationDefaults.AuthenticationScheme);
