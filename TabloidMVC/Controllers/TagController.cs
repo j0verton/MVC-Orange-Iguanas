@@ -93,7 +93,7 @@ namespace TabloidMVC.Controllers
             //if --- adding a logic here for allowing only on posts
             if (post == null) 
             {
-                return RedirectToAction("Post", "Details", new { id = id });
+                return RedirectToAction("Details", "Post", new { id = id });
             };
             PostTagViewModel vm = new PostTagViewModel()
             {

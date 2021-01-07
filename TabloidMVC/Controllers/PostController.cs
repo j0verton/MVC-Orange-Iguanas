@@ -127,7 +127,7 @@ namespace TabloidMVC.Controllers
         public ActionResult Edit(int id)
         {
             Post post = _postRepository.GetPublishedPostById(id);
-            if (post == null)
+            if (post == null || post.UserProfileId != GetCurrentUserProfileId())
             {
                 int userId = GetCurrentUserProfileId();
                 post = _postRepository.GetUserPostById(id, userId);
