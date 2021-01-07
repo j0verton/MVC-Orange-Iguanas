@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using TabloidMVC.Models;
 using TabloidMVC.Repositories;
@@ -11,6 +12,12 @@ namespace TabloidMVC.Controllers
 {
     public class ProfileController : Controller
     {
+        private string GetCurrentUserEmail() 
+        {
+            string email = User.FindFirstValue(ClaimTypes.Email);
+            return email;
+        }
+
         private readonly IUserProfileRepository _userProfileRepo;
 
         public ProfileController(IUserProfileRepository userProfileRepository)
@@ -21,7 +28,7 @@ namespace TabloidMVC.Controllers
         // GET: ProfileController
         public ActionResult Index()
         {
-            var profiles = _userProfileRepo.GetAllUserProfiles();
+            var profiles = _userProfileRepo.GetAllActiveUserProfiles();
             return View(profiles);
         }
 
@@ -29,6 +36,12 @@ namespace TabloidMVC.Controllers
         public ActionResult Details(int id)
         {
             UserProfile user = _userProfileRepo.GetById(id); 
+            return View(user);
+        }
+        // GET: ProfileController/Details
+        public ActionResult UserProfile()
+        {
+            UserProfile user = _userProfileRepo.GetByEmail(GetCurrentUserEmail());
             return View(user);
         }
 
@@ -68,7 +81,7 @@ namespace TabloidMVC.Controllers
             try
             {
                 //make this a list of admins then throw and exception if its 1
-                int AdminCount = _userProfileRepo.GetAllUserProfiles().Where(user => user.UserTypeId == 1).Count();
+                int AdminCount = _userProfileRepo.GetAllActiveUserProfiles().Where(user => user.UserTypeId == 1).Count();
 
                 if (AdminCount == 1 && user.UserTypeId != 1)
                 {
@@ -96,7 +109,7 @@ namespace TabloidMVC.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Deactivate(int id, UserProfile userProfile)
         {
-            int AdminCount = _userProfileRepo.GetAllUserProfiles().Where(user => user.UserTypeId == 1).Count();
+            int AdminCount = _userProfileRepo.GetAllActiveUserProfiles().Where(user => user.UserTypeId == 1).Count();
             UserProfile user = _userProfileRepo.GetById(id);
             if (AdminCount == 1 && user.UserTypeId == 1)
             {
@@ -106,7 +119,35 @@ namespace TabloidMVC.Controllers
             }
             try
             {
-                _userProfileRepo.DeactiveUser(id);
+                _userProfileRepo.DeactivateUser(id);
+                return RedirectToAction("Index");
+            }
+            catch
+            {
+                return View(userProfile);
+            }
+        }
+        // POST: ProfileController/Inactive
+        public ActionResult Inactive()
+        {
+            var inactiveProfiles = _userProfileRepo.GetAllInactiveUserProfiles();
+            return View(inactiveProfiles);
+        }
+        // GET: ProfileController/Reactivate/5
+        public ActionResult Reactivate(int id)
+        {
+            UserProfile userProfile = _userProfileRepo.GetById(id);
+            return View(userProfile);
+        }
+
+        // POST: ProfileController/Deactivate/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Reactivate(int id, UserProfile userProfile)
+        {
+            try
+            {
+                _userProfileRepo.ReactivateUser(id);
                 return RedirectToAction("Index");
             }
             catch
