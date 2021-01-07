@@ -24,13 +24,23 @@ namespace TabloidMVC.Controllers
             _tagRepository = tagRepository;
         }
 
+        [Authorize(Roles = "Admin, Author")]
         public IActionResult Index()
         {
+            if (User.IsInRole("Admin"))
+            {
+                var posts = _postRepository.GetAllPosts();
+                return View(posts);
+            }
+            else
+            {
                 var posts = _postRepository.GetAllPublishedPosts();
                 return View(posts);
+            }
       
         }
 
+        [Authorize(Roles = "Admin, Author")]
         public IActionResult Details(int id)
         {
             var post = _postRepository.GetPublishedPostById(id);
@@ -48,14 +58,14 @@ namespace TabloidMVC.Controllers
             vm.Tags= _tagRepository.GetTagsByPost(id);
             return View(vm);
         }
-
+        [Authorize(Roles = "Admin, Author")]
         public IActionResult Create()
         {
             var vm = new PostCreateViewModel();
             vm.CategoryOptions = _categoryRepository.GetAll();
             return View(vm);
         }
-
+        [Authorize(Roles = "Admin, Author")]
         [HttpPost]
         public IActionResult Create(PostCreateViewModel vm)
         {
@@ -75,18 +85,33 @@ namespace TabloidMVC.Controllers
                 return View(vm);
             }
         }
+        [Authorize(Roles = "Admin, Author")]
         public IActionResult MyPosts()
         {
             var MyPosts = _postRepository.GetPostByUserId(GetCurrentUserProfileId());
             return View(MyPosts);
 
         }
-        [Authorize]
+        [Authorize(Roles = "Admin, Author")]
         public IActionResult Delete(int id)
         {
-            Post post = _postRepository.GetUserPostById(id, GetCurrentUserProfileId());
-            return View(post);
+            if (User.IsInRole("Admin"))
+            {
+                Post post = _postRepository.GetPostById(id);
+                return View(post);
+            }
+            else
+            { 
+                Post post = _postRepository.GetUserPostById(id, GetCurrentUserProfileId());
+                if (post == null)
+                {
+                    return RedirectToAction("Details", new { id = id });
+                };
+                return View(post);
+            }
         }
+
+        [Authorize(Roles = "Admin, Author")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, Post post)
@@ -102,10 +127,11 @@ namespace TabloidMVC.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin, Author")]
         public ActionResult Edit(int id)
         {
             Post post = _postRepository.GetPublishedPostById(id);
-            if (post == null)
+            if (post == null || post.UserProfileId != GetCurrentUserProfileId())
             {
                 int userId = GetCurrentUserProfileId();
                 post = _postRepository.GetUserPostById(id, userId);
@@ -120,6 +146,7 @@ namespace TabloidMVC.Controllers
             return View(vm);
         }
 
+        [Authorize(Roles = "Admin, Author")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(PostCreateViewModel vm)

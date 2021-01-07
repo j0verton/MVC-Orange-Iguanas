@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using TabloidMVC.Models;
 using TabloidMVC.Repositories;
@@ -11,6 +13,12 @@ namespace TabloidMVC.Controllers
 {
     public class ProfileController : Controller
     {
+        private string GetCurrentUserEmail() 
+        {
+            string email = User.FindFirstValue(ClaimTypes.Email);
+            return email;
+        }
+
         private readonly IUserProfileRepository _userProfileRepo;
 
         public ProfileController(IUserProfileRepository userProfileRepository)
@@ -19,26 +27,41 @@ namespace TabloidMVC.Controllers
         }
 
         // GET: ProfileController
+        [Authorize(Roles = "Admin")]
         public ActionResult Index()
         {
-            var profiles = _userProfileRepo.GetAllUserProfiles();
+            var profiles = _userProfileRepo.GetAllActiveUserProfiles();
             return View(profiles);
         }
 
         // GET: ProfileController/Details/5
+        [Authorize(Roles = "Admin, Author")]
         public ActionResult Details(int id)
         {
-            UserProfile user = _userProfileRepo.GetById(id); 
+            if (GetCurrentUserProfileId() == id || User.IsInRole("Admin"))
+            {
+                UserProfile user = _userProfileRepo.GetById(id);
+                return View(user);
+            }
+            else return UserProfile();
+        }
+        // GET: ProfileController/Details
+        [Authorize(Roles = "Admin, Author")]
+        public ActionResult UserProfile()
+        {
+            UserProfile user = _userProfileRepo.GetByEmail(GetCurrentUserEmail());
             return View(user);
         }
 
         // GET: ProfileController/Create
+        [Authorize(Roles = "Admin")]
         public ActionResult Create()
         {
             return View();
         }
 
         // POST: ProfileController/Create
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(IFormCollection collection)
@@ -53,7 +76,9 @@ namespace TabloidMVC.Controllers
             }
         }
 
+        //currently authors cant edit their own profiles
         // GET: ProfileController/Edit/5
+        [Authorize(Roles = "Admin")]
         public ActionResult Edit(int id)
         {
             UserProfile user = _userProfileRepo.GetById(id);
@@ -61,6 +86,7 @@ namespace TabloidMVC.Controllers
         }
 
         // POST: ProfileController/Edit/5
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(UserProfile user)
@@ -68,9 +94,10 @@ namespace TabloidMVC.Controllers
             try
             {
                 //make this a list of admins then throw and exception if its 1
-                int AdminCount = _userProfileRepo.GetAllUserProfiles().Where(user => user.UserTypeId == 1).Count();
-
-                if (AdminCount == 1 && user.UserTypeId != 1)
+                List<UserProfile> Admins = _userProfileRepo.GetAllActiveUserProfiles().Where(user => user.UserTypeId == 1).ToList();
+                int AdminCount = Admins.Count();
+                UserProfile AdminUser = Admins.FirstOrDefault(admin => admin.Id == user.Id);
+                if (AdminUser != null && AdminCount == 1 && user.UserTypeId != 1)
                 {
                     ModelState.AddModelError("UserTypeId", "System must contain 1 active Admin, please add a new Admin before removing");
                     return View(user);
@@ -85,6 +112,7 @@ namespace TabloidMVC.Controllers
         }
 
         // GET: ProfileController/Deactivate/5
+        [Authorize(Roles = "Admin")]
         public ActionResult Deactivate(int id)
         {
             UserProfile userProfile = _userProfileRepo.GetById(id);
@@ -92,11 +120,12 @@ namespace TabloidMVC.Controllers
         }
 
         // POST: ProfileController/Deactivate/5
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Deactivate(int id, UserProfile userProfile)
         {
-            int AdminCount = _userProfileRepo.GetAllUserProfiles().Where(user => user.UserTypeId == 1).Count();
+            int AdminCount = _userProfileRepo.GetAllActiveUserProfiles().Where(user => user.UserTypeId == 1).Count();
             UserProfile user = _userProfileRepo.GetById(id);
             if (AdminCount == 1 && user.UserTypeId == 1)
             {
@@ -106,13 +135,50 @@ namespace TabloidMVC.Controllers
             }
             try
             {
-                _userProfileRepo.DeactiveUser(id);
+                _userProfileRepo.DeactivateUser(id);
                 return RedirectToAction("Index");
             }
             catch
             {
                 return View(userProfile);
             }
+        }
+        // POST: ProfileController/Inactive
+        [Authorize(Roles = "Admin")]
+        public ActionResult Inactive()
+        {
+            var inactiveProfiles = _userProfileRepo.GetAllInactiveUserProfiles();
+            return View(inactiveProfiles);
+        }
+        // GET: ProfileController/Reactivate/5
+        [Authorize(Roles = "Admin")]
+        public ActionResult Reactivate(int id)
+        {
+            UserProfile userProfile = _userProfileRepo.GetById(id);
+            return View(userProfile);
+        }
+
+        // POST: ProfileController/Deactivate/5
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Reactivate(int id, UserProfile userProfile)
+        {
+            try
+            {
+                _userProfileRepo.ReactivateUser(id);
+                return RedirectToAction("Index");
+            }
+            catch
+            {
+                return View(userProfile);
+            }
+        }
+
+        private int GetCurrentUserProfileId()
+        {
+            string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return int.Parse(id);
         }
     }
 }
