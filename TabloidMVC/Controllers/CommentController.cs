@@ -27,8 +27,9 @@ namespace TabloidMVC.Controllers
             _postRepository = postRepository;
             _userProfileRepository = userProfileRepository;
         }
-        
+
         // GET: HomeController1
+        [Authorize(Roles = "Admin, Author")]
         public ActionResult Index(int id)
         {
             var currentUser = GetCurrentUser();
@@ -96,7 +97,7 @@ namespace TabloidMVC.Controllers
                 return View(vm);
             }
         }
-        
+        [Authorize(Roles = "Admin, Author")]
         // GET: HomeController1/Edit/5
         public ActionResult Edit(int id)
         {
@@ -112,6 +113,7 @@ namespace TabloidMVC.Controllers
         // POST: HomeController1/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, Author")]
         public ActionResult Edit(Comment comment)
         {
             try
@@ -126,6 +128,7 @@ namespace TabloidMVC.Controllers
         }
 
         // GET: HomeController1/Delete/5
+        [Authorize(Roles = "Admin, Author")]
         public ActionResult Delete(int id)
         {
             var user = _userProfileRepository.GetById(GetCurrentUser());
@@ -140,6 +143,7 @@ namespace TabloidMVC.Controllers
         // POST: HomeController1/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, Author")]
         public ActionResult Delete(int id, Comment comment)
         {
             try
