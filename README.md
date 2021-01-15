@@ -23,7 +23,28 @@ Tabloid Has two types of users, Authors and Admis, which are limited by authoriz
 
 ### ERD
 
-![Tabloid ERD](./Tabloid.png)
+![Tabloid ERD](./images/Tabloid.png)
 
 ### Let'stake a visual journey as an Author
-![Tabloid Login](./MVC-Orange-Iguanas/TabloidMVC/wwwroot/Tabloid_caption_1.PNG)
+#### Login
+![Tabloid Login](./images/Tabloid_caption_1.PNG)
+#### Creating a post
+![Tabloid Post](./images/Tabloid_caption_2.PNG)
+
+#### View once an author makes a  post
+##### you'll notice the category to the right
+![Tabloid View](./images/Tabloid_caption_3.PNG)
+#### An Author's view when going to add comments
+##### Notice that only comments the logged in user created shows options for editing or deleting
+![Tabloid Comment](./images/Tabloid_caption_4.PNG)
+
+
+### An Author has the same views an abilities as views as Authors, however they have no edit or delete restrictions
+
+#### as an addition, they have the ability to add, edit, and delete categories
+
+#### View of all categories currently in existance
+![Tabloid Categories](./images/Tabloid_cats.PNG)
+    
+#### View when creating a new category
+![Tabloid Categories](./images/Category@addition.PNG)
