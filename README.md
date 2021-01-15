@@ -23,7 +23,7 @@ Tabloid Has two types of users, Authors and Admis, which are limited by authoriz
 
 ### ERD
 
-![Tabloid ERD](./Tabloid.png)
+![Tabloid ERD](./images/Tabloid.png)
 
 ### Let'stake a visual journey as an Author
-![Tabloid Login](./MVC-Orange-Iguanas/TabloidMVC/wwwroot/Tabloid_caption_1.PNG)
+![Tabloid Login](./images/Tabloid_caption_1.PNG)
