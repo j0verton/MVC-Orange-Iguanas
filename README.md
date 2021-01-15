@@ -1,23 +1,29 @@
 # Tabloid MVC
 
-Good news, everyone, our [Tabloid CLI Proof of Concept](https://github.com/nashville-software-school/TabloidCLI) did it's job! We were able to test our business idea after a minimal amount of development time. And we learned people don't want to keep a list of other people's blog content. What they really want is to make their own content.
-
+A website based off of Medium.com, that was created with a group of four people. The purpose of Tabloid was to utilized and level up our understanding of building an application in ASP.NET with the MVC Pattern
 So it's time to pivot. We're still going to focus on long-form writing, but not we'll let people write their own posts.
 
-## Tabloid Prototype
+## What's in it??
 
-We're ready to build a [working prototype](https://en.wikipedia.org/wiki/Prototype) of the Tabloid application. This prototype will help us better understand and refine our product. It won't be as feature-rich or as polished as our final product, but it should implement the core features and be as close to our _current vision_ of the product as possible. 
+Full CRUD with intricate foreign key relationships found throughout the database. A Repository Pattern was created to handle all of the SQL commands which allows the users to manipulate the data. 
 
-We know we want a multi-user web application with a rich user experience. For the final product, we we'd like to use react, but we'd like to develope the prototype as rapidly as possible. The architect has decided that ASP<span>.NET</span> Core MVC is the perfect balance of features and rapid development.
+Models were created to represent the Data Tables for User Profiles, Posts, Comments, Tags, and categories. 
+
+Views utlize Razor pages which combine C# and HTML, which combine to give our users a pleasant way to view data and create/manipulate items which are within their authorization
+
+Controllers were created for each model as a way to handle request coming from the browser, and relayed back to repositories to retrieve or manipulate items. Which then return one of the views so that users have a streamlined experience for creating, reading, updating, or even deleting posts on the website.
 
 ### Users
 
-Tabloid MVC will have two types of users:
+Tabloid Has two types of users, Authors and Admis, which are limited by authorization rights:
 
-* **Authors** can create Posts, manage their own Posts, and read and comment on other authors' posts.
+* **Authors** can create Posts, manage their own Posts(to include editing and deleting), are prevented from making any changes to Posts which don't belong to them, and read and comment on other authors' posts
 
-* **Admins** can do all the things authors can do, but are also in charge of managing all the data in the system.
+* **Admins** can do all the things authors can do, but are also in charge of managing all the data in the system. 
 
 ### ERD
 
 ![Tabloid ERD](./Tabloid.png)
+
+### Let'stake a visual journey as an Author
+![Tabloid Login](./MVC-Orange-Iguanas/TabloidMVC/wwwroot/Tabloid_caption_1.PNG)
