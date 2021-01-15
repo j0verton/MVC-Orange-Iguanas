@@ -83,7 +83,7 @@ namespace TabloidMVC.Controllers
                 {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Email, user.Email),
-                     new Claim(ClaimTypes.Role, "Author")
+                new Claim(ClaimTypes.Role, "Author")
                  };
                 var claimsIdentity = new ClaimsIdentity(
                 claims, CookieAuthenticationDefaults.AuthenticationScheme);
