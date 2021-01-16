@@ -1,7 +1,9 @@
 # Tabloid MVC
 
 A website based off of Medium.com, that was created with a group of four people. The purpose of Tabloid was to utilize and level up our understanding of building an application in ASP.NET with the MVC Pattern.
-So it's time to pivot. We're still going to focus on long-form writing, but not we'll let people write their own posts.
+
+I worked on: Authorization, User Profile Details, updating UserProfiles and their admin privileges, ensuring that the site always has at leadt one admin user, and the Tagging feature--CRUD operations on tags and linking/unlinking tags to/from specific posts. 
+
 
 ## To Run the Project
 - Clone the repo
