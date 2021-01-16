@@ -1,7 +1,12 @@
 # Tabloid MVC
 
-A website based off of Medium.com, that was created with a group of four people. The purpose of Tabloid was to utilized and level up our understanding of building an application in ASP.NET with the MVC Pattern
+A website based off of Medium.com, that was created with a group of four people. The purpose of Tabloid was to utilize and level up our understanding of building an application in ASP.NET with the MVC Pattern.
 So it's time to pivot. We're still going to focus on long-form writing, but not we'll let people write their own posts.
+
+## To Run the Project
+- Clone the repo
+- Run the SQL scripts in SQL directory in order
+- Run the program using dotnet run or your debugger
 
 ## What's in it??
 
